@@ -1,5 +1,5 @@
-# pureconfig
-Easy, clean and fast config parser with dot notation property access
+# liteconfig
+Easy, fast and lightweight config parser with dot notation property access.
 
 
 
