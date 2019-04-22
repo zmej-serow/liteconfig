@@ -1,1 +1,1 @@
-name = "pureconfig"
+name = "liteconfig"
