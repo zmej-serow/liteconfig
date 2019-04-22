@@ -1,6 +1,6 @@
 # liteconfig
 
-Easy, fast and lightweight config parser with dot notation property access.
+Lightweight, configurable and fast parser with dot notation property access.
 
 ### Features:
 - dot notation: `value = cfg.section.property`;
