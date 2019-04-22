@@ -100,5 +100,5 @@ print(cfg.nonexistent)                 # AttributeError exception
 ```
 
 ### TO-DO:
-- Parsing various formats of hierarchical configs (with subsections)
+- Parsing various formats of hierarchical configs (with subsections).
 - Add option to return None for nonexistent sections and properties instead of rising exception. 
