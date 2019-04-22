@@ -83,7 +83,9 @@ The same goes to boolean values: notice how `yes` became `True` for `kill_all_hu
 property. 
 
 ```python
-cfg = Config('config.ini')
+import liteconfig
+
+cfg = liteconfig.Config('config.ini')
 print(cfg.property)                    # 'value'
 print(cfg.section.heads)               # 'tails'
 print(cfg.юникод.文字)                 # '😉'
