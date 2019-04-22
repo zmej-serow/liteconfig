@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.1",
     author="Zmej Serow",
     author_email="zmej.serow@gmail.com",
-    description="Easy, fast and lightweight config parser with dot notation property access.",
+    description="Lightweight, configurable and fast parser with dot notation property access.",
     keywords='configparser ini parsing conf cfg configuration file',
     platforms=['any'],
     license='MIT',
