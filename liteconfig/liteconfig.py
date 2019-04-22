@@ -253,21 +253,3 @@ class ConfigSection(object):
 
     def __iter__(self):
         yield from self.__dict__
-
-
-cfg = Config('init2.cfg')
-assert cfg.item == 'value'
-assert cfg.misc.webserver == 'd:\\work\\!python\\wtpic\\webserver'
-assert type(cfg.xyz.max_filesize) == int
-assert cfg.xyz.max_filesize == 5000000
-assert cfg.xyz.loglevel == 'DEBUG'
-assert cfg.xyz.kill_all_humans is True
-assert cfg.has_property('database') is True
-assert cfg.has_property('database', 'xyz') is True
-assert cfg.has_property('databas', 'xyz') is False
-assert cfg.has_property('webserver', 'xyz') is False
-assert cfg.has_property('databas') is False
-assert cfg.has_section('xyz') is True
-assert cfg.has_section('xy') is False
-assert cfg.юникод.文字 == '😉'
-cfg.write('init2-.cfg')
