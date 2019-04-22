@@ -2,7 +2,7 @@
 
 Easy, fast and lightweight config parser with dot notation property access.
 
-###Features:
+### Features:
 - dot notation: `value = cfg.section.property`;
 - customizable parsing options;
 - no dependencies inside, only plain Python;
@@ -11,7 +11,7 @@ Easy, fast and lightweight config parser with dot notation property access.
 - multiple encodings support, including Unicode;
 - read/write config files.
 
-###Default parsing options and their meaning:
+### Default parsing options and their meaning:
 - `delimiter = '='`  
 delimiter between property and value is "=".
 - `comment_markers = '#;'`  
@@ -27,7 +27,7 @@ case-insensitive tuple of string values, recognized as boolean "False".
 - `encoding = 'utf-8'`  
 parser will try to read and write config files using this encoding.
 
-###Public methods of Config object:
+### Public methods of Config object:
 - `__init__(input_data [, delimiter, comment_markers, parse_numbers, parse_booleans,
   boolean_true, boolean_false, encoding])`  
 Instantiates Config object and parses input_data. Depending on type of input_data,
@@ -42,14 +42,14 @@ as second argument.
 - `write(file)`  
 Export config to file with the same settings as when object was instantiated.
 
-###Error handling:
+### Error handling:
 - Attempt to load nonexistent config file will raise `FileNotFoundError`.
 - Also may raise `PermissionError` if process does not have sufficient privileges to read or write file.
 - Access to nonexistent property (or section) will raise `AttributeError`.
 - If `input_data` is not list nor string nor path to config file, will raise `ValueError`.
 - Fail to decode `input_data` file will result in `UnicodeError`.
 
-###Example:
+### Example:
 
 ```ini
 ===BEGIN config.ini===
@@ -99,6 +99,6 @@ print(type(cfg.misc.pi))               # float
 print(cfg.nonexistent)                 # AttributeError exception
 ```
 
-###TO-DO:
+### TO-DO:
 - Parsing various formats of hierarchical configs (with subsections)
 - Add option to return None for nonexistent sections and properties instead of rising exception. 
