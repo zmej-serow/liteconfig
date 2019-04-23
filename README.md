@@ -96,7 +96,7 @@ print(type(cfg.section.nokia))         # int
 print(cfg.misc.kill_all_humans)        # True
 print(type(cfg.misc.kill_all_humans))  # bool
 
-print(cfg.misc.pi)                     # 3.1459
+print(cfg.misc.pi)                     # 3.14159
 print(type(cfg.misc.pi))               # float
 print(cfg.nonexistent)                 # AttributeError exception
 ```
