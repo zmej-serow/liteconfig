@@ -65,7 +65,7 @@ nokia = 3310
 [misc]
 # this comment will be ignored too
 kill_all_humans = yes
-pi = 3.1459
+pi = 3.14159
 
 [юникод]
 文字 = 😉
