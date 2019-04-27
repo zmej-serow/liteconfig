@@ -15,23 +15,31 @@ Features:
 
 Default parsing options and their meaning:
     - delimiter = '='
-      delimiter between property and value is "=".
+      Delimiter between property and value is "=".
     - comment_markers = '#;'
-      empty lines and lines beginning with "#" or ";" are ignored.
+      Empty lines and lines beginning with "#" or ";" are ignored.
     - parse_numbers = True
-      will try to parse numeric values to int or float.
+      Will try to parse numeric values to int or float.
     - parse_booleans = True
-      will try to parse boolean values to bool.
+      Will try to parse boolean values to bool.
     - boolean_true = ('1', 'yes', 'true', 'on')
-      case-insensitive tuple of string values, recognized as boolean "True".
+      Case-insensitive tuple of string values, recognized as boolean "True".
     - boolean_false = ('0', 'no', 'false', 'off')
-      case-insensitive tuple of string values, recognized as boolean "False".
+      Case-insensitive tuple of string values, recognized as boolean "False".
     - encoding = 'utf-8'
-      parser will try to read and write config files using this encoding.
+      Parser will try to read and write config files using this encoding.
+    - exceptions = False
+      If True, accessing nonexistent properties (or sections) of config will raise AttributeError.
+      If False, nonexistent property will return None. Absent section will return special object Nothing,
+      which can be tested against truth (and it will always return False). So you can use the construction like
+      if cfg.section.property:
+          # do something with cfg.section.property
+      else:
+          # handle nonexistence
 
 Public methods of Config object:
     - __init__(input_data [, delimiter, comment_markers, parse_numbers, parse_booleans,
-      boolean_true, boolean_false, encoding]):
+      boolean_true, boolean_false, encoding, exceptions]):
       Instantiates Config object and parses input_data. Depending on type of input_data,
       instance will parse it as list, as multiline string or will interpret string as path to
       config file and read it.
@@ -46,7 +54,7 @@ Public methods of Config object:
 Error handling:
     - Attempt to load nonexistent config file will raise FileNotFoundError.
     - Also may raise PermissionError if process does not have sufficient privileges to read or write file.
-    - Access to nonexistent property (or section) will raise AttributeError.
+    - If desired, access to nonexistent property (or section) will raise AttributeError.
     - If input_data is not list nor string nor path to config file, will raise ValueError.
     - Fail to decode input_data file will result in UnicodeError.
 
@@ -65,7 +73,7 @@ nokia = 3310
 [misc]
 # this comment will be ignored too
 kill_all_humans = yes
-pi = 3.1459
+pi = 3.14159
 
 [юникод]
 文字 = 😉
@@ -82,9 +90,11 @@ print(type(cfg.section.nokia))         # int
 print(cfg.misc.kill_all_humans)        # True
 print(type(cfg.misc.kill_all_humans))  # bool
 
-print(cfg.misc.pi)                     # 3.1459
+print(cfg.misc.pi)                     # 3.14159
 print(type(cfg.misc.pi))               # float
-print(cfg.nonexistent)                 # AttributeError exception
+print(cfg.nonexistent)                 # AttributeError exception or None
+print(cfg.voidsection.nonexistent)     # AttributeError exception or Nothing (boolean False)
+print(cfg.voidsection)                 # AttributeError exception or Nothing (boolean False)
 """
 
 
@@ -99,7 +109,8 @@ class Config(object):
                  parse_booleans=True,
                  boolean_true=('1', 'yes', 'true', 'on'),
                  boolean_false=('0', 'no', 'false', 'off'),
-                 encoding='utf-8'
+                 encoding='utf-8',
+                 exceptions=False
                  ):
         """
         Initializes Config instance.
@@ -121,6 +132,7 @@ class Config(object):
         self.__boolean_true = boolean_true
         self.__boolean_false = boolean_false
         self.__encoding = encoding
+        self.__exceptions = exceptions
 
         self.__sections = []
         self.__properties = []
@@ -209,7 +221,7 @@ class Config(object):
         else:
             raise NotImplemented("Parsing hierarchical INI configs is not yet implemented")
 
-    def _default_parser(self, lines):
+    def _default_parser(self, lines, section_name=None):
         """
         Default parser: sections' structure is flat (no hierarchy).
         :param lines: list of lines of config file.
@@ -227,7 +239,7 @@ class Config(object):
                 section_content = []
                 while lines and not is_section(lines[0]):  # rip section lines and feed them to separate parser
                     section_content.append(lines.pop(0))
-                section[property_key] = self._default_parser(section_content)
+                section[property_key] = self._default_parser(section_content, property_key)
 
             else:
                 equator = line.find(self.__delimiter)  # chop key:value line
@@ -243,16 +255,58 @@ class Config(object):
 
                 section[property_key] = property_value
                 self.__properties.append(property_key)
-        return ConfigSection(section)
+        return ConfigSection(self.__exceptions, section_name, section)
+
+    def __getattr__(self, item):
+        if not self.__exceptions:
+            return Nothing()
+        else:
+            raise AttributeError(f'Config does not contain section "{item}"')
+
+
+class Singleton(type):
+    """
+    Singleton pattern realization via metaclass
+    https://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
+    """
+    _instances = {}
+
+    def __call__(cls):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__()
+        return cls._instances[cls]
+
+
+class Nothing(object, metaclass=Singleton):
+    """
+    A special class.
+    If instance of Nothing is tested against truth, it always return False.
+    If one is trying to access it's attribute, it will return itself.
+    Eventually chain of attribute calls will end and object will return False.
+    Have to create it because one cannot override __getattribute__ of NoneType.
+    """
+    def __bool__(self):
+        return False
+
+    def __getattr__(self, item):
+        return self
 
 
 class ConfigSection(object):
     """
     Data container object
     """
-    def __init__(self, argv):
+    def __init__(self, exceptions, section_name, argv):
+        self.__exceptions = exceptions
+        self.__name = section_name
         for key, value in argv.items():
             self.__dict__[key] = value
 
     def __iter__(self):
         yield from self.__dict__
+
+    def __getattr__(self, item):
+        if not self.__exceptions:
+            return None
+        else:
+            raise AttributeError(f'Section "{self.__name}" does not contain property "{item}"')
