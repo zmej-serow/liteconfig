@@ -26,10 +26,20 @@ case-insensitive tuple of string values, recognized as boolean "True".
 case-insensitive tuple of string values, recognized as boolean "False".
 - `encoding = 'utf-8'`  
 parser will try to read and write config files using this encoding.
+- `exceptions = False`
+If True, accessing nonexistent properties (or sections) of config will raise `AttributeError`.
+If False, nonexistent property will return None. Absent section will return special object Nothing,
+which can be tested against truth (and it will always return False). So you can use the construction like
+```python
+if cfg.section.property:
+  # do something with cfg.section.property
+else:
+  # handle nonexistence
+```
 
 ### Public methods of Config object:
 - `__init__(input_data [, delimiter, comment_markers, parse_numbers, parse_booleans,
-  boolean_true, boolean_false, encoding])`  
+  boolean_true, boolean_false, encoding, exceptions])`  
 Instantiates Config object and parses input_data. Depending on type of input_data,
 instance will parse it as list, as multiline string or will interpret string as path to
 config file and read it.
@@ -45,7 +55,7 @@ Export config to file with the same settings as when object was instantiated.
 ### Error handling:
 - Attempt to load nonexistent config file will raise `FileNotFoundError`.
 - Also may raise `PermissionError` if process does not have sufficient privileges to read or write file.
-- Access to nonexistent property (or section) will raise `AttributeError`.
+- If desired, access to nonexistent property (or section) will raise `AttributeError`.
 - If `input_data` is not list nor string nor path to config file, will raise `ValueError`.
 - Fail to decode `input_data` file will result in `UnicodeError`.
 
@@ -98,10 +108,15 @@ print(type(cfg.misc.kill_all_humans))  # bool
 
 print(cfg.misc.pi)                     # 3.14159
 print(type(cfg.misc.pi))               # float
-print(cfg.nonexistent)                 # AttributeError exception
+print(cfg.nonexistent)                 # AttributeError exception or None
+print(cfg.voidsection.nonexistent)     # AttributeError exception or Nothing (boolean False)
+print(cfg.voidsection)                 # AttributeError exception or Nothing (boolean False)
 ```
 
 ### TO-DO:
 - Add tests!
 - Add parsers for various formats of hierarchical configs (with subsections).
-- Add option to return None for nonexistent sections and properties instead of rising exception. 
+
+### History:
+- 0.0.1: initial release.
+- 0.0.2: added option to raise exception or return None/False for absent properties or sections.
