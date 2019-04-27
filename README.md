@@ -120,3 +120,4 @@ print(cfg.voidsection)                 # AttributeError exception or Nothing (bo
 ### History:
 - 0.0.1: initial release.
 - 0.0.2: added option to raise exception or return None/False for absent properties or sections.
+- 0.0.3: minor fixes in documentation.
