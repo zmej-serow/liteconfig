@@ -115,6 +115,7 @@ print(cfg.voidsection)                 # AttributeError exception or Nothing (bo
 
 ### TO-DO:
 - Add tests!
+- To remember comments and visual structure of read .ini document in write() method.
 - Add parsers for various formats of hierarchical configs (with subsections).
 
 ### History:
