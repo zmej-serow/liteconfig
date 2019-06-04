@@ -22,9 +22,9 @@ Default parsing options and their meaning:
       Will try to parse numeric values to int or float.
     - parse_booleans = True
       Will try to parse boolean values to bool.
-    - boolean_true = ('1', 'yes', 'true', 'on')
+    - boolean_true = ('yes', 'true', 'on')
       Case-insensitive tuple of string values, recognized as boolean "True".
-    - boolean_false = ('0', 'no', 'false', 'off')
+    - boolean_false = ('no', 'false', 'off')
       Case-insensitive tuple of string values, recognized as boolean "False".
     - encoding = 'utf-8'
       Parser will try to read and write config files using this encoding.
@@ -107,8 +107,8 @@ class Config(object):
                  hierarchy=None,
                  parse_numbers=True,
                  parse_booleans=True,
-                 boolean_true=('1', 'yes', 'true', 'on'),
-                 boolean_false=('0', 'no', 'false', 'off'),
+                 boolean_true=('yes', 'true', 'on'),
+                 boolean_false=('no', 'false', 'off'),
                  encoding='utf-8',
                  exceptions=False
                  ):
