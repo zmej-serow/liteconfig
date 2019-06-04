@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/zmej-serow/liteconfig.svg?branch=master)](https://travis-ci.com/zmej-serow/liteconfig)
+
 # liteconfig
 
 Lightweight and configurable .ini config parser with dot notation property access.
