@@ -20,9 +20,9 @@ empty lines and lines beginning with "#" or ";" are ignored.
 will try to parse numeric values to int or float.
 - `parse_booleans = True`  
 will try to parse boolean values to bool.
-- `boolean_true = ('1', 'yes', 'true', 'on')`  
+- `boolean_true = ('yes', 'true', 'on')`  
 case-insensitive tuple of string values, recognized as boolean "True".
-- `boolean_false = ('0', 'no', 'false', 'off')`  
+- `boolean_false = ('no', 'false', 'off')`  
 case-insensitive tuple of string values, recognized as boolean "False".
 - `encoding = 'utf-8'`  
 parser will try to read and write config files using this encoding.
@@ -114,11 +114,11 @@ print(cfg.voidsection)                 # AttributeError exception or Nothing (bo
 ```
 
 ### TO-DO:
-- Add tests!
-- To remember comments and visual structure of read .ini document in write() method.
-- Add parsers for various formats of hierarchical configs (with subsections).
+- Keep comments when writing previously read config.
+- Parsers for various formats of hierarchical configs (with subsections).
 
 ### History:
 - 0.0.1: initial release.
 - 0.0.2: added option to raise exception or return None/False for absent properties or sections.
 - 0.0.3: minor fixes in documentation.
+- 0.1.0: added tests. Removed '1' and '0' from parsed booleans, as it conflicts with parsing numbers.
