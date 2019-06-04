@@ -27,7 +27,7 @@ config_as_list = ['; you can have properties belonging to no section (i.e., in v
 
 
 class TestLiteConfig(unittest.TestCase):
-    variants = [liteconfig.Config('fixtures/test.ini'),
+    variants = [liteconfig.Config('tests/fixtures/test.ini'),
                 liteconfig.Config(config_as_list),
                 liteconfig.Config(config_as_string)]
 
@@ -60,8 +60,8 @@ class TestLiteConfig(unittest.TestCase):
     def test_write(self):
         test_values = ['property = value', '[section]', 'first = 1', '[partition]', 'second = 2']
         cfg1 = liteconfig.Config(test_values)
-        cfg1.write('fixtures/out.ini')
-        cfg2 = liteconfig.Config('fixtures/out.ini')
+        cfg1.write('tests/fixtures/out.ini')
+        cfg2 = liteconfig.Config('tests/fixtures/out.ini')
         assert cfg2._Config__properties == cfg1._Config__properties
         assert len(cfg2._Config__properties) == 3
         assert cfg2._Config__sections == cfg1._Config__sections
@@ -69,7 +69,7 @@ class TestLiteConfig(unittest.TestCase):
         assert cfg1.property == cfg2.property
         assert cfg1.section.first == cfg2.section.first == 1
         assert cfg1.partition.second == cfg2.partition.second == 2
-        os.remove('fixtures/out.ini')
+        os.remove('tests/fixtures/out.ini')
 
     def test_delimiter(self):
         cfg = liteconfig.Config(['property: is here'], delimiter=':')
@@ -114,14 +114,14 @@ class TestLiteConfig(unittest.TestCase):
             assert x.юникод.文字 == '😉'
 
     def test_encodings(self):
-        cfg = liteconfig.Config('fixtures/koi8-r.ini', encoding='koi8_r')
+        cfg = liteconfig.Config('tests/fixtures/koi8-r.ini', encoding='koi8_r')
         assert cfg.бНОПНЯ == "Вопрос"
         assert not cfg.Вопрос
-        cfg = liteconfig.Config('fixtures/koi8-r.ini', encoding='cp1251')
+        cfg = liteconfig.Config('tests/fixtures/koi8-r.ini', encoding='cp1251')
         assert cfg.Вопрос == "чПРТПУ"
         assert not cfg.чПРТПУ
         with self.assertRaises(UnicodeError):
-            _ = liteconfig.Config('fixtures/koi8-r.ini')
+            _ = liteconfig.Config('tests/fixtures/koi8-r.ini')
 
     def test_exceptions(self):
         test_list = ['stray = cats', '[section]', 'truth = lie']
