@@ -5,7 +5,7 @@ with open("README.md", "r", encoding='utf-8') as fh:
 
 setuptools.setup(
     name="liteconfig",
-    version="0.0.3",
+    version="0.1.0",
     author="Zmej Serow",
     author_email="zmej.serow@gmail.com",
     description="Lightweight and configurable .ini config parser with dot notation property access.",
