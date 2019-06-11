@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/zmej-serow/liteconfig.svg?branch=master)](https://travis-ci.com/zmej-serow/liteconfig)
+[![Coverage Status](https://coveralls.io/repos/github/zmej-serow/liteconfig/badge.svg?branch=master)](https://coveralls.io/github/zmej-serow/liteconfig?branch=master)
 
 # liteconfig
 
