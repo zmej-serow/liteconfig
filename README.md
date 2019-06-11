@@ -6,43 +6,43 @@
 Lightweight and configurable .ini config parser with dot notation property access.
 
 ## Features
--  dot notation: `value = cfg.section.property`;
+  -  dot notation: `value = cfg.section.property`;
 
--  customizable parsing options;
+  -  customizable parsing options;
 
--  no dependencies inside, only plain Python;
+  -  no dependencies inside, only plain Python;
 
--  can handle text files, multiline strings or lists as input data;
+  -  can handle text files, multiline strings or lists as input data;
 
--  no singleton, you can use as much Config objects as you want;
+  -  no singleton, you can use as much Config objects as you want;
 
--  multiple encodings support, including Unicode;
+  -  multiple encodings support, including Unicode;
 
--  read/write config files.
+  -  read/write config files.
 
 ## Default parsing options and their meaning
--  `delimiter = '='`  
+  -  `delimiter = '='`  
 delimiter between property and value is "=".
 
--  `comment_markers = '#;'`  
+  -  `comment_markers = '#;'`  
 empty lines and lines beginning with "#" or ";" are ignored.
 
--  `parse_numbers = True`  
+  -  `parse_numbers = True`  
 will try to parse numeric values to int or float.
 
--  `parse_booleans = True`  
+  -  `parse_booleans = True`  
 will try to parse boolean values to bool.
 
--  `boolean_true = ('yes', 'true', 'on')`  
+  -  `boolean_true = ('yes', 'true', 'on')`  
 case-insensitive tuple of string values, recognized as boolean "True".
 
--  `boolean_false = ('no', 'false', 'off')`  
+  -  `boolean_false = ('no', 'false', 'off')`  
 case-insensitive tuple of string values, recognized as boolean "False".
 
--  `encoding = 'utf-8'`  
+  -  `encoding = 'utf-8'`  
 parser will try to read and write config files using this encoding.
 
--  `exceptions = False`
+  -  `exceptions = False`
 If True, accessing nonexistent properties (or sections) of config will raise `AttributeError`.
 If False, nonexistent property will return None. Absent section will return special object Nothing,
 which can be tested against truth (and it will always return False). So you can use the construction like
@@ -54,28 +54,28 @@ else:
 ```
 
 ## Public methods of Config object
--  `__init__(input_data [, delimiter, comment_markers, parse_numbers, parse_booleans, boolean_true, boolean_false, encoding, exceptions])`  
+  -  `__init__(input_data [, delimiter, comment_markers, parse_numbers, parse_booleans, boolean_true, boolean_false, encoding, exceptions])`  
 Instantiates Config object and parses input_data. Depending on type of input_data, instance will parse it as list, as multiline string or will interpret string as path to config file and read it.
 
--  `has_section(item)`  
+  -  `has_section(item)`  
 Return True or False depending on existence of config section.
 
--  `has_property(item [, section])`  
+  -  `has_property(item [, section])`  
 Return True or False depending on existence of config property. Will search in all sections by default or in one concrete section if it is passed as second argument.
 
--  `write(file)`  
+  -  `write(file)`  
 Export config to file with the same settings as when object was instantiated.
 
 ## Error handling
--  Attempt to load nonexistent config file will raise `FileNotFoundError`.
+  -  Attempt to load nonexistent config file will raise `FileNotFoundError`.
 
--  Also may raise `PermissionError` if process does not have sufficient privileges to read or write file.
+  -  Also may raise `PermissionError` if process does not have sufficient privileges to read or write file.
 
--  If desired, access to nonexistent property (or section) will raise `AttributeError`.
+  -  If desired, access to nonexistent property (or section) will raise `AttributeError`.
 
--  If `input_data` is not list nor string nor path to config file, will raise `ValueError`.
+  -  If `input_data` is not list nor string nor path to config file, will raise `ValueError`.
 
--  Fail to decode `input_data` file will result in `UnicodeError`.
+  -  Fail to decode `input_data` file will result in `UnicodeError`.
 
 ## Example
 
@@ -132,19 +132,19 @@ print(cfg.voidsection)                 # AttributeError exception or Nothing (bo
 ```
 
 ## TO-DO
--  Keep comments when writing previously read config.
+  -  Keep comments when writing previously read config.
 
--  Parsers for various formats of hierarchical configs (with subsections).
+  -  Parsers for various formats of hierarchical configs (with subsections).
 
 ## History
--  0.0.1: initial release.
+  -  0.0.1: initial release.
 
--  0.0.2: added option to raise exception or return None/False for absent properties or sections.
+  -  0.0.2: added option to raise exception or return None/False for absent properties or sections.
 
--  0.0.3: minor fixes in documentation.
+  -  0.0.3: minor fixes in documentation.
 
--  0.1.0: added tests. Removed '1' and '0' from parsed booleans, as it conflicts with parsing numbers.
+  -  0.1.0: added tests. Removed '1' and '0' from parsed booleans, as it conflicts with parsing numbers.
 
--  0.1.1: minor fixes in documentation.
+  -  0.1.1: minor fixes in documentation.
 
--  0.1.2: code clean-up.
+  -  0.1.2: code clean-up.
