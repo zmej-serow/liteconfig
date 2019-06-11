@@ -161,6 +161,10 @@ class TestLiteConfig(unittest.TestCase):
             _ = liteconfig.Config((23,))
         with self.assertRaises(ValueError):
             _ = liteconfig.Config({'we': 'they'})
+            
+    def test_not_implemented(self):
+        with self.assertRaises(NotImplementedError):
+            _ = liteconfig.Config(['hierarchy = test'], hierarchy=1)
 
 
 if __name__ == '__main__':
