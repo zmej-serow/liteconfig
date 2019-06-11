@@ -7,5 +7,5 @@ after_success:
   - coveralls
 script:
   - python -m unittest tests/test-*.py
-  - coverage run -m unittest -s tests/test-*.py
+  - coverage run --source=. -m unittest discover -s tests/
   - coverage report -m
