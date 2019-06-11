@@ -5,7 +5,7 @@
 
 Lightweight and configurable .ini config parser with dot notation property access.
 
-### Features
+## Features
 -  dot notation: `value = cfg.section.property`;
 
 -  customizable parsing options;
@@ -20,7 +20,7 @@ Lightweight and configurable .ini config parser with dot notation property acces
 
 -  read/write config files.
 
-### Default parsing options and their meaning
+## Default parsing options and their meaning
 -  `delimiter = '='`  
 delimiter between property and value is "=".
 
@@ -53,7 +53,7 @@ else:
   # handle nonexistence
 ```
 
-### Public methods of Config object
+## Public methods of Config object
 -  `__init__(input_data [, delimiter, comment_markers, parse_numbers, parse_booleans, boolean_true, boolean_false, encoding, exceptions])`  
 Instantiates Config object and parses input_data. Depending on type of input_data, instance will parse it as list, as multiline string or will interpret string as path to config file and read it.
 
@@ -66,7 +66,7 @@ Return True or False depending on existence of config property. Will search in a
 -  `write(file)`  
 Export config to file with the same settings as when object was instantiated.
 
-### Error handling
+## Error handling
 -  Attempt to load nonexistent config file will raise `FileNotFoundError`.
 
 -  Also may raise `PermissionError` if process does not have sufficient privileges to read or write file.
@@ -77,7 +77,7 @@ Export config to file with the same settings as when object was instantiated.
 
 -  Fail to decode `input_data` file will result in `UnicodeError`.
 
-### Example
+## Example
 
 ```ini
 ===BEGIN config.ini===
@@ -131,12 +131,12 @@ print(cfg.voidsection.nonexistent)     # AttributeError exception or Nothing (bo
 print(cfg.voidsection)                 # AttributeError exception or Nothing (boolean False)
 ```
 
-### TO-DO
+## TO-DO
 -  Keep comments when writing previously read config.
 
 -  Parsers for various formats of hierarchical configs (with subsections).
 
-### History
+## History
 -  0.0.1: initial release.
 
 -  0.0.2: added option to raise exception or return None/False for absent properties or sections.
