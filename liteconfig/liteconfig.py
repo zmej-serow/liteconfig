@@ -120,9 +120,9 @@ class Config(object):
         :param hierarchy: (stub) .ini-file section hierarchy type.
         :param parse_numbers: if set, number-looking values will be parsed as float or integer, not strings.
         :param parse_booleans: if set, boolean-looking values will be parsed as real booleans, not strings.
-        :param encoding: default is UTF-8 to manage unicode symbols in your config file
+        :param encoding: default is UTF-8 to manage unicode symbols in your config file.
 
-        :raise ValueError when input data is not list nor string nor path to config file
+        :raise ValueError when input data is not list nor string nor path to config file.
         """
         self.__comment_markers = comment_markers
         self.__delimiter = delimiter
