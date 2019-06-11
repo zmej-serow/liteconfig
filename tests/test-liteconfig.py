@@ -33,104 +33,111 @@ class TestLiteConfig(unittest.TestCase):
 
     def test_init_config(self):
         for x in self.variants:
-            assert isinstance(x, liteconfig.Config)
+            self.assertIsInstance(x, liteconfig.Config)
 
     def test_has_section(self):
         for x in self.variants:
-            assert x.has_section('misc')
-            assert not x.has_section('misq')
+            self.assertTrue(x.has_section('misc'))
+            self.assertFalse(x.has_section('misq'))
 
     def test_has_property(self):
         for x in self.variants:
-            assert x.has_property('pi', 'misc')
-            assert x.has_property('property')
-            assert not x.has_property('properti')
-            assert not x.has_property('e', 'misc')
-            assert not x.has_property('e', 'misq')
-            assert not x.has_property('pi', 'misq')
+            self.assertTrue(x.has_property('pi', 'misc'))
+            self.assertTrue(x.has_property('property'))
+            self.assertFalse(x.has_property('properti'))
+            self.assertFalse(x.has_property('e', 'misc'))
+            self.assertFalse(x.has_property('e', 'misq'))
+            self.assertFalse(x.has_property('pi', 'misq'))
 
     def test_dot_notation(self):
         for x in self.variants:
-            assert x.misc.pi == 3.14159
-            assert x.property == 'value'
-            assert not x.nonexistent
-            assert not x.void.nonexistent
-            assert not x.void.nonexistent.etcetera
+            self.assertEqual(x.misc.pi, 3.14159)
+            self.assertEqual(x.property, 'value')
+            self.assertFalse(x.nonexistent)
+            self.assertFalse(x.void.nonexistent)
+            self.assertFalse(x.void.nonexistent.etcetera)
 
     def test_write(self):
         test_values = ['property = value', '[section]', 'first = 1', '[partition]', 'second = 2']
         cfg1 = liteconfig.Config(test_values)
         cfg1.write('tests/fixtures/out.ini')
         cfg2 = liteconfig.Config('tests/fixtures/out.ini')
-        assert cfg2._Config__properties == cfg1._Config__properties
-        assert len(cfg2._Config__properties) == 3
-        assert cfg2._Config__sections == cfg1._Config__sections
-        assert len(cfg2._Config__sections) == 2
-        assert cfg1.property == cfg2.property
-        assert cfg1.section.first == cfg2.section.first == 1
-        assert cfg1.partition.second == cfg2.partition.second == 2
+        self.assertEqual(cfg1._Config__properties, cfg2._Config__properties)
+        self.assertEqual(len(cfg2._Config__properties), 3)
+        self.assertEqual(cfg1._Config__sections, cfg2._Config__sections)
+        self.assertEqual(len(cfg2._Config__sections), 2)
+        self.assertEqual(cfg1.property, cfg2.property)
+        self.assertEqual(cfg1.section.first, cfg2.section.first, 1)
+        self.assertEqual(cfg1.partition.second, cfg2.partition.second, 2)
         os.remove('tests/fixtures/out.ini')
 
     def test_delimiter(self):
         cfg = liteconfig.Config(['property: is here'], delimiter=':')
-        assert cfg.property == 'is here'
+        self.assertEqual(cfg.property, 'is here')
 
     def test_comment_markers(self):
         cfg = liteconfig.Config(['-property: is here', '=property: is here'], comment_markers='-=')
-        assert not cfg.property
+        self.assertFalse(cfg.property)
 
     def test_parse_numbers_yes(self):
         cfg = liteconfig.Config(['rough_pi = 3', 'pi = 3.14'], parse_numbers=True)
-        assert cfg.rough_pi == 3
-        assert cfg.pi == 3.14
+        self.assertEqual(cfg.rough_pi, 3)
+        self.assertIsInstance(cfg.rough_pi, int)
+        self.assertEqual(cfg.pi, 3.14)
+        self.assertIsInstance(cfg.pi, float)
 
     def test_parse_numbers_no(self):
         cfg = liteconfig.Config(['rough_pi = 3', 'pi = 3.14'], parse_numbers=False)
-        assert cfg.rough_pi == '3'
-        assert cfg.pi == '3.14'
+        self.assertEqual(cfg.rough_pi, '3')
+        self.assertEqual(cfg.pi, '3.14')
 
     def test_parse_booleans_yes(self):
         test_values = ['a = yes', 'b = no',
                        'c = True', 'd = False',
                        'e = on', 'f = off']
         cfg = liteconfig.Config(test_values, parse_booleans=True)
-        assert cfg.a == cfg.c == cfg.e is True
-        assert cfg.b == cfg.d == cfg.f is False
+        self.assertTrue(cfg.a)
+        self.assertTrue(cfg.c)
+        self.assertTrue(cfg.e)
+        self.assertFalse(cfg.b)
+        self.assertFalse(cfg.d)
+        self.assertFalse(cfg.f)
 
     def test_parse_booleans_no(self):
         test_values = ['a = yes', 'b = no',
                        'c = True', 'd = False',
                        'e = on', 'f = off']
         cfg = liteconfig.Config(test_values, parse_booleans=False)
-        assert not isinstance(cfg.a, bool)
-        assert not isinstance(cfg.b, bool)
-        assert not isinstance(cfg.c, bool)
-        assert not isinstance(cfg.d, bool)
-        assert not isinstance(cfg.e, bool)
-        assert not isinstance(cfg.f, bool)
+        self.assertIsInstance(cfg.a, str)
+        self.assertIsInstance(cfg.a, str)
+        self.assertIsInstance(cfg.b, str)
+        self.assertIsInstance(cfg.c, str)
+        self.assertIsInstance(cfg.d, str)
+        self.assertIsInstance(cfg.e, str)
+        self.assertIsInstance(cfg.f, str)
 
     def test_unicode(self):
         for x in self.variants:
-            assert x.юникод.文字 == '😉'
+            self.assertEqual(x.юникод.文字, '😉')
 
     def test_encodings(self):
         cfg = liteconfig.Config('tests/fixtures/koi8-r.ini', encoding='koi8_r')
-        assert cfg.бНОПНЯ == "Вопрос"
-        assert not cfg.Вопрос
+        self.assertEqual(cfg.бНОПНЯ, "Вопрос")
+        self.assertFalse(cfg.Вопрос)
         cfg = liteconfig.Config('tests/fixtures/koi8-r.ini', encoding='cp1251')
-        assert cfg.Вопрос == "чПРТПУ"
-        assert not cfg.чПРТПУ
+        self.assertEqual(cfg.Вопрос, "чПРТПУ")
+        self.assertFalse(cfg.чПРТПУ)
         with self.assertRaises(UnicodeError):
             _ = liteconfig.Config('tests/fixtures/koi8-r.ini')
 
     def test_exceptions(self):
         test_list = ['stray = cats', '[section]', 'truth = lie']
         cfg = liteconfig.Config(test_list, exceptions=False)
-        assert not cfg.void
-        assert not cfg.nonexistent.void
-        assert not cfg.section.void
-        assert cfg.stray
-        assert cfg.section.truth
+        self.assertFalse(cfg.void)
+        self.assertFalse(cfg.nonexistent.void)
+        self.assertFalse(cfg.section.void)
+        self.assertTrue(cfg.stray)
+        self.assertTrue(cfg.section.truth)
         cfg = liteconfig.Config(test_list, exceptions=True)
         with self.assertRaises(AttributeError):
             _ = cfg.void
