@@ -7,5 +7,5 @@ after_success:
   - coveralls
 script:
   - python -m unittest tests/test-*.py
-  - coverage run --source=liteconfig/liteconfig.py tests/test-*.py
+  - coverage run --source=liteconfig/liteconfig.py setup.py tests/test-*.py
   - coverage report -m
