@@ -1,2 +1,3 @@
 liteconfig
 python-coveralls
+coverage
