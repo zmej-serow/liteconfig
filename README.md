@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7ccc0a867ac04019b3d5483694eaca63)](https://app.codacy.com/app/zmej-serow/liteconfig?utm_source=github.com&utm_medium=referral&utm_content=zmej-serow/liteconfig&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.com/zmej-serow/liteconfig.svg?branch=master)](https://travis-ci.com/zmej-serow/liteconfig)
 [![Coverage Status](https://coveralls.io/repos/github/zmej-serow/liteconfig/badge.svg?branch=master)](https://coveralls.io/github/zmej-serow/liteconfig?branch=master)
 
