@@ -165,7 +165,3 @@ class TestLiteConfig(unittest.TestCase):
     def test_not_implemented(self):
         with self.assertRaises(NotImplementedError):
             _ = liteconfig.Config(['hierarchy = test'], hierarchy=1)
-
-
-if __name__ == '__main__':
-    unittest.main()
