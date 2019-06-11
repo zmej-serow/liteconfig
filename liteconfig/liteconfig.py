@@ -120,9 +120,9 @@ class Config(object):
         :param hierarchy: (stub) .ini-file section hierarchy type.
         :param parse_numbers: if set, number-looking values will be parsed as float or integer, not strings.
         :param parse_booleans: if set, boolean-looking values will be parsed as real booleans, not strings.
-        :param encoding: default is UTF-8 to manage unicode symbols in your config file.
+        :param encoding: default is UTF-8 to manage unicode symbols in your config file
 
-        :raise ValueError when input data is not list nor string nor path to config file.
+        :raise ValueError when input data is not list nor string nor path to config file
         """
         self.__comment_markers = comment_markers
         self.__delimiter = delimiter
@@ -137,9 +137,9 @@ class Config(object):
         self.__sections = []
         self.__properties = []
 
-        if type(input_data) is list:
+        if isinstance(input_data, list):
             self._parse_list(input_data)
-        elif type(input_data) is str:
+        elif isinstance(input_data, str):
             if '\n' in input_data:
                 self._parse_string(input_data)
             else:
@@ -159,16 +159,16 @@ class Config(object):
     def write(self, file):
         """Export config to file with the same settings as it was read in."""
         export_list = self._export(self)
-        export_lines = '\n'.join([x for x in export_list if type(x) is not list])
+        export_lines = '\n'.join([x for x in export_list if not isinstance(x, list)])
         with open(file, 'w', encoding=self.__encoding) as f:
             f.writelines(export_lines)
 
     def _export(self, section, accumulator=[]):
         """Returns config representation as list of strings"""
         for key, value in section.__dict__.items():
-            if type(value) in [str, int, bool, float] and key[0] is not '_':
+            if isinstance(value, (str, int, bool, float)) and key[0] is not '_':
                 accumulator.append(key + self.__delimiter + str(value))
-            elif type(value) is ConfigSection:
+            elif isinstance(value, ConfigSection):
                 accumulator.append('[' + key + ']')
                 accumulator.append(self._export(value, accumulator))
         return accumulator
@@ -188,7 +188,8 @@ class Config(object):
         config_list = [x for x in config_list if (len(x) > 2 and x[0] not in self.__comment_markers)]
         self.__dict__ = {**self.__dict__, **self._parser_factory()(config_list).__dict__}
 
-    def _parse_numbers(self, value):
+    @staticmethod
+    def _parse_numbers(value):
         """If string value can be represented as number,
         method will return it as int or float, else untouched."""
         try:
@@ -197,8 +198,8 @@ class Config(object):
                 value = int(conv_float)
             else:
                 value = conv_float
-        except:
-            pass
+        except ValueError:
+            return value
         return value
 
     def _parse_booleans(self, value):
@@ -219,7 +220,7 @@ class Config(object):
         if not self.__hierarchy:
             return self._default_parser
         else:
-            raise NotImplemented("Parsing hierarchical INI configs is not yet implemented")
+            raise NotImplementedError("Parsing hierarchical INI configs is not yet implemented")
 
     def _default_parser(self, lines, section_name=None):
         """
