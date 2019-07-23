@@ -44,3 +44,8 @@ def common_configs():
             liteconfig.Config(string_fixture()),
             liteconfig.Config(unicode_file_fixture())
             ]
+
+
+@pytest.fixture
+def simple_config():
+    return liteconfig.Config(['property = value', '[section]', 'first = 1', '[partition]', 'second = 2'])

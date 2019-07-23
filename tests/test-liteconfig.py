@@ -59,21 +59,20 @@ def test_invalid_input():
         _ = liteconfig.Config({'we': 'they'})
 
 
-class TestLiteConfig:
+def test_write(simple_config):
+    simple_config.write('tests/fixtures/out.ini')
+    cfg2 = liteconfig.Config('tests/fixtures/out.ini')
+    assert simple_config._Config__properties == cfg2._Config__properties
+    assert len(cfg2._Config__properties) == 3
+    assert simple_config._Config__sections == cfg2._Config__sections
+    assert len(cfg2._Config__sections) == 2
+    assert simple_config.property == cfg2.property
+    assert simple_config.section.first == cfg2.section.first, 1
+    assert simple_config.partition.second == cfg2.partition.second, 2
+    os.remove('tests/fixtures/out.ini')
 
-    def test_write(self):
-        test_values = ['property = value', '[section]', 'first = 1', '[partition]', 'second = 2']
-        cfg1 = liteconfig.Config(test_values)
-        cfg1.write('tests/fixtures/out.ini')
-        cfg2 = liteconfig.Config('tests/fixtures/out.ini')
-        assert cfg1._Config__properties == cfg2._Config__properties
-        assert len(cfg2._Config__properties) == 3
-        assert cfg1._Config__sections == cfg2._Config__sections
-        assert len(cfg2._Config__sections) == 2
-        assert cfg1.property == cfg2.property
-        assert cfg1.section.first == cfg2.section.first, 1
-        assert cfg1.partition.second == cfg2.partition.second, 2
-        os.remove('tests/fixtures/out.ini')
+
+class TestLiteConfig:
 
     def test_delimiter(self):
         cfg = liteconfig.Config(['property: is here'], delimiter=':')
