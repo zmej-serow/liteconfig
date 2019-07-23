@@ -1,3 +1,4 @@
 liteconfig
+pytest
 python-coveralls
 coverage

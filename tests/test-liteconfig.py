@@ -3,59 +3,63 @@ import liteconfig
 import pytest
 
 
-config_as_string = """
-; you can have properties belonging to no section (i.e., in very simple sectionless configs)
-property = value
-
-[section]
-; this comment will be ignored
-heads = tails
-truth = lie
-nokia = 3310
-
-[misc]
-# this comment will be ignored too
-kill_all_humans = yes
-pi = 3.14159
-
-[юникод]
-文字 = 😉
-"""
-config_as_list = ['; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
-'property = value','','[section]', '; this comment will be ignored', 'heads = tails', 'truth = lie', 'nokia = 3310',
-'', '[misc]', '# this comment will be ignored too', 'kill_all_humans = yes', 'pi = 3.14159', '', '[юникод]', '文字 = 😉']
+def test_init_config(common_configs):
+    for config in common_configs:
+        assert isinstance(config, liteconfig.Config)
 
 
-class TestLiteConfig():
-    variants = [liteconfig.Config('tests/fixtures/test.ini'),
-                liteconfig.Config(config_as_list),
-                liteconfig.Config(config_as_string)]
+def test_has_section(common_configs):
+    for config in common_configs:
+        assert config.has_section('misc')
+        assert not config.has_section('misq')
 
-    def test_init_config(self):
-        for x in self.variants:
-            assert isinstance(x, liteconfig.Config)
 
-    def test_has_section(self):
-        for x in self.variants:
-            assert x.has_section('misc')
-            assert not x.has_section('misq')
+def test_has_property(common_configs):
+    for config in common_configs:
+        assert config.has_property('pi', 'misc')
+        assert config.has_property('property')
+        assert not config.has_property('properti')
+        assert not config.has_property('e', 'misc')
+        assert not config.has_property('e', 'misq')
+        assert not config.has_property('pi', 'misq')
 
-    def test_has_property(self):
-        for x in self.variants:
-            assert x.has_property('pi', 'misc')
-            assert x.has_property('property')
-            assert not x.has_property('properti')
-            assert not x.has_property('e', 'misc')
-            assert not x.has_property('e', 'misq')
-            assert not x.has_property('pi', 'misq')
 
-    def test_dot_notation(self):
-        for x in self.variants:
-            assert x.misc.pi == 3.14159
-            assert x.property == 'value'
-            assert not x.nonexistent
-            assert not x.void.nonexistent
-            assert not x.void.nonexistent.etcetera
+def test_dot_notation(common_configs):
+    for config in common_configs:
+        assert config.misc.pi == 3.14159
+        assert config.property == 'value'
+        assert not config.nonexistent
+        assert not config.void.nonexistent
+        assert not config.void.nonexistent.etcetera
+
+
+def test_unicode(common_configs):
+    for config in common_configs:
+        assert config.юникод.文字 == '😉'
+
+
+def test_filenotfound():
+    with pytest.raises(FileNotFoundError):
+        _ = liteconfig.Config('nonexistent.ini')
+
+
+def test_not_implemented():
+    with pytest.raises(NotImplementedError):
+        _ = liteconfig.Config(['hierarchy = test'], hierarchy=1)
+
+
+def test_invalid_input():
+    with pytest.raises(ValueError):
+        _ = liteconfig.Config(14)
+    with pytest.raises(ValueError):
+        _ = liteconfig.Config(True)
+    with pytest.raises(ValueError):
+        _ = liteconfig.Config((23,))
+    with pytest.raises(ValueError):
+        _ = liteconfig.Config({'we': 'they'})
+
+
+class TestLiteConfig:
 
     def test_write(self):
         test_values = ['property = value', '[section]', 'first = 1', '[partition]', 'second = 2']
@@ -116,10 +120,6 @@ class TestLiteConfig():
         assert isinstance(cfg.e, str)
         assert isinstance(cfg.f, str)
 
-    def test_unicode(self):
-        for x in self.variants:
-            assert x.юникод.文字 == '😉'
-
     def test_encodings(self):
         cfg = liteconfig.Config('tests/fixtures/koi8-r.ini', encoding='koi8_r')
         assert cfg.бНОПНЯ == "Вопрос"
@@ -147,21 +147,3 @@ class TestLiteConfig():
             _ = cfg.void.nonexistent
         with pytest.raises(AttributeError):
             _ = cfg.section.void
-
-    def test_filenotfound(self):
-        with pytest.raises(FileNotFoundError):
-            _ = liteconfig.Config('nonexistent.ini')
-
-    def test_invalid_input(self):
-        with pytest.raises(ValueError):
-            _ = liteconfig.Config(14)
-        with pytest.raises(ValueError):
-            _ = liteconfig.Config(True)
-        with pytest.raises(ValueError):
-            _ = liteconfig.Config((23,))
-        with pytest.raises(ValueError):
-            _ = liteconfig.Config({'we': 'they'})
-
-    def test_not_implemented(self):
-        with pytest.raises(NotImplementedError):
-            _ = liteconfig.Config(['hierarchy = test'], hierarchy=1)
