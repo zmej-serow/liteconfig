@@ -6,6 +6,6 @@ install:
 after_success:
   - coveralls
 script:
-  - python -m unittest tests/test-*.py
-  - coverage run --source=. -m unittest tests/test-*.py
+  - python -m pytest tests/test-*.py
+  - coverage run --source=. -m pytest tests/test-*.py
   - coverage report -m
