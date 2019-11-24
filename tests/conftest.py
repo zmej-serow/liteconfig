@@ -2,7 +2,7 @@ import liteconfig
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture()
 def list_fixture():
     return ['; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
             'property = value',
@@ -23,17 +23,17 @@ def list_fixture():
             ]
 
 
-@pytest.fixture
-def string_fixture():
-    return '\n'.join(list_fixture())
+@pytest.fixture()
+def string_fixture(list_fixture):
+    return '\n'.join(list_fixture)
 
 
-@pytest.fixture
+@pytest.fixture()
 def unicode_file_fixture():
     return 'tests/fixtures/test.ini'
 
 
-@pytest.fixture
+@pytest.fixture()
 def koi8r_file_fixture():
     return 'tests/fixtures/koi8-r.ini'
 
@@ -43,7 +43,7 @@ def common_configs(request):
     return liteconfig.Config(request.param)
 
 
-@pytest.fixture
+@pytest.fixture()
 def simple_config():
     return liteconfig.Config(['property = value',
                               '[section]',
@@ -57,7 +57,7 @@ def delimiter_configs(request):
     return liteconfig.Config([f'property{request.param} is here'], delimiter=request.param)
 
 
-@pytest.fixture
+@pytest.fixture()
 def comment_markers():
     return liteconfig.Config(['-property: is here', '=property: is here'], comment_markers='-=')
 
