@@ -2,7 +2,6 @@ import liteconfig
 import pytest
 
 
-@pytest.fixture()
 def list_fixture():
     return ['; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
             'property = value',
@@ -23,12 +22,10 @@ def list_fixture():
             ]
 
 
-@pytest.fixture(name="list_fixture")
 def string_fixture():
     return '\n'.join(list_fixture())
 
 
-@pytest.fixture()
 def unicode_file_fixture():
     return 'tests/fixtures/test.ini'
 
