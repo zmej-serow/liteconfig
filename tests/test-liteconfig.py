@@ -4,41 +4,36 @@ import pytest
 
 
 def test_init_config(common_configs):
-    for config in common_configs:
-        assert isinstance(config, liteconfig.Config)
+    assert isinstance(common_configs, liteconfig.Config)
 
 
 def test_has_section(common_configs):
-    for config in common_configs:
-        assert config.has_section('misc')
-        assert not config.has_section('misq')
+    assert common_configs.has_section('misc')
+    assert not common_configs.has_section('misq')
 
 
 def test_has_property(common_configs):
-    for config in common_configs:
-        assert config.has_property('pi', 'misc')
-        assert config.has_property('property')
-        assert not config.has_property('properti')
-        assert not config.has_property('e', 'misc')
-        assert not config.has_property('e', 'misq')
-        assert not config.has_property('pi', 'misq')
+    assert common_configs.has_property('pi', 'misc')
+    assert common_configs.has_property('property')
+    assert not common_configs.has_property('properti')
+    assert not common_configs.has_property('e', 'misc')
+    assert not common_configs.has_property('e', 'misq')
+    assert not common_configs.has_property('pi', 'misq')
 
 
 def test_dot_notation(common_configs):
-    for config in common_configs:
-        assert config.misc.pi == 3.14159
-        assert config.property == 'value'
-        assert not config.nonexistent
-        assert not config.void.nonexistent
-        assert not config.void.nonexistent.etcetera
+    assert common_configs.misc.pi == 3.14159
+    assert common_configs.property == 'value'
+    assert not common_configs.nonexistent
+    assert not common_configs.void.nonexistent
+    assert not common_configs.void.nonexistent.etcetera
 
 
 def test_unicode(common_configs):
-    for config in common_configs:
-        assert config.юникод.文字 == '😉'
+    assert common_configs.юникод.文字 == '😉'
 
 
-def test_filenotfound():
+def test_file_not_found():
     with pytest.raises(FileNotFoundError):
         _ = liteconfig.Config('nonexistent.ini')
 
@@ -72,77 +67,69 @@ def test_write(simple_config):
     os.remove('tests/fixtures/out.ini')
 
 
-class TestLiteConfig:
+def test_delimiter(delimiter_configs):
+    assert delimiter_configs.property == 'is here'
 
-    def test_delimiter(self):
-        cfg = liteconfig.Config(['property: is here'], delimiter=':')
-        assert cfg.property == 'is here'
 
-    def test_comment_markers(self):
-        cfg = liteconfig.Config(['-property: is here', '=property: is here'], comment_markers='-=')
-        assert not cfg.property
+def test_comment_markers(comment_markers):
+    assert not comment_markers.has_property('property')
 
-    def test_parse_numbers_yes(self):
-        cfg = liteconfig.Config(['rough_pi = 3', 'pi = 3.14'], parse_numbers=True)
-        assert cfg.rough_pi == 3
-        assert isinstance(cfg.rough_pi, int)
-        assert cfg.pi == 3.14
-        assert isinstance(cfg.pi, float)
 
-    def test_parse_numbers_no(self):
-        cfg = liteconfig.Config(['rough_pi = 3', 'pi = 3.14'], parse_numbers=False)
-        assert cfg.rough_pi == '3'
-        assert cfg.pi == '3.14'
+def test_parsing_numbers(parse_numbers):
+    if parse_numbers._Config__parse_numbers:
+        assert parse_numbers.rough_pi == 3
+        assert isinstance(parse_numbers.rough_pi, int)
+        assert parse_numbers.pi == 3.14
+        assert isinstance(parse_numbers.pi, float)
+    else:
+        assert parse_numbers.rough_pi == '3'
+        assert parse_numbers.pi == '3.14'
 
-    def test_parse_booleans_yes(self):
-        test_values = ['a = yes', 'b = no',
-                       'c = True', 'd = False',
-                       'e = on', 'f = off']
-        cfg = liteconfig.Config(test_values, parse_booleans=True)
-        assert cfg.a
-        assert cfg.c
-        assert cfg.e
-        assert not cfg.b
-        assert not cfg.d
-        assert not cfg.f
 
-    def test_parse_booleans_no(self):
-        test_values = ['a = yes', 'b = no',
-                       'c = True', 'd = False',
-                       'e = on', 'f = off']
-        cfg = liteconfig.Config(test_values, parse_booleans=False)
-        assert isinstance(cfg.a, str)
-        assert isinstance(cfg.a, str)
-        assert isinstance(cfg.b, str)
-        assert isinstance(cfg.c, str)
-        assert isinstance(cfg.d, str)
-        assert isinstance(cfg.e, str)
-        assert isinstance(cfg.f, str)
+def test_parsing_booleans(parse_booleans):
+    if parse_booleans._Config__parse_booleans:
+        assert parse_booleans.a
+        assert parse_booleans.c
+        assert parse_booleans.e
+        assert not parse_booleans.b
+        assert not parse_booleans.d
+        assert not parse_booleans.f
+    else:
+        assert isinstance(parse_booleans.a, str)
+        assert isinstance(parse_booleans.b, str)
+        assert isinstance(parse_booleans.c, str)
+        assert isinstance(parse_booleans.d, str)
+        assert isinstance(parse_booleans.e, str)
+        assert isinstance(parse_booleans.f, str)
 
-    def test_encodings(self):
-        cfg = liteconfig.Config('tests/fixtures/koi8-r.ini', encoding='koi8_r')
-        assert cfg.бНОПНЯ == "Вопрос"
-        assert not cfg.Вопрос
-        cfg = liteconfig.Config('tests/fixtures/koi8-r.ini', encoding='cp1251')
-        assert cfg.Вопрос == "чПРТПУ"
-        assert not cfg.чПРТПУ
-        with pytest.raises(UnicodeError):
-            _ = liteconfig.Config('tests/fixtures/koi8-r.ini')
 
-    def test_exceptions(self):
-        test_list = ['stray = cats', '[section]', 'truth = lie']
-        cfg = liteconfig.Config(test_list, exceptions=False)
-        assert not cfg.void
-        assert not cfg.nonexistent.void
-        assert not cfg.section.void
-        assert cfg.stray
-        assert cfg.section.truth
-        cfg = liteconfig.Config(test_list, exceptions=True)
+def test_encodings(encodings):
+    if encodings._Config__encoding == 'koi8_r':
+        assert encodings.бНОПНЯ == "Вопрос"
+        assert not encodings.Вопрос
+    elif encodings._Config__encoding == 'cp1251':
+        assert encodings.Вопрос == "чПРТПУ"
+        assert not encodings.чПРТПУ
+
+
+def test_unicode_against_nonunicode_data(koi8r_file_fixture):
+    with pytest.raises(UnicodeError):
+        _ = liteconfig.Config(koi8r_file_fixture)
+
+
+def test_exceptions(exceptions):
+    if exceptions._Config__exceptions:
         with pytest.raises(AttributeError):
-            _ = cfg.void
+            _ = exceptions.void
         with pytest.raises(AttributeError):
-            _ = cfg.nonexistent
+            _ = exceptions.nonexistent
         with pytest.raises(AttributeError):
-            _ = cfg.void.nonexistent
+            _ = exceptions.void.nonexistent
         with pytest.raises(AttributeError):
-            _ = cfg.section.void
+            _ = exceptions.section.void
+    else:
+        assert not exceptions.void
+        assert not exceptions.nonexistent.void
+        assert not exceptions.section.void
+        assert exceptions.stray
+        assert exceptions.section.truth
