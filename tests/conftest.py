@@ -38,7 +38,7 @@ def unicode_file_fixture():
 #     return 'tests/fixtures/koi8-r.ini'
 #
 #
-@pytest.fixture(params=[list_fixture, string_fixture, unicode_file_fixture])
+@pytest.fixture(params=[list_fixture(), string_fixture(), unicode_file_fixture()])
 def common_configs(request):
     return liteconfig.Config(request.param)
 #
