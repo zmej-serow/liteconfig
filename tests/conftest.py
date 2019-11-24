@@ -2,32 +2,52 @@ import liteconfig
 import pytest
 
 
-def list_fixture():
-    return ['; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
-            'property = value',
-            '',
-            '[section]',
-            '; this comment will be ignored',
-            'heads = tails',
-            'truth = lie',
-            'nokia = 3310',
-            '',
-            '[misc]',
-            '# this comment will be ignored too',
-            'kill_all_humans = yes',
-            'pi = 3.14159',
-            '',
-            '[юникод]',
-            '文字 = 😉'
-            ]
+# def list_fixture():
+#     return ['; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
+#             'property = value',
+#             '',
+#             '[section]',
+#             '; this comment will be ignored',
+#             'heads = tails',
+#             'truth = lie',
+#             'nokia = 3310',
+#             '',
+#             '[misc]',
+#             '# this comment will be ignored too',
+#             'kill_all_humans = yes',
+#             'pi = 3.14159',
+#             '',
+#             '[юникод]',
+#             '文字 = 😉'
+#             ]
+
+list_fixture = ['; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
+                'property = value',
+                '',
+                '[section]',
+                '; this comment will be ignored',
+                'heads = tails',
+                'truth = lie',
+                'nokia = 3310',
+                '',
+                '[misc]',
+                '# this comment will be ignored too',
+                'kill_all_humans = yes',
+                'pi = 3.14159',
+                '',
+                '[юникод]',
+                '文字 = 😉'
+                ]
+string_fixture = '\n'.join(list_fixture)
+unicode_file_fixture = 'tests/fixtures/test.ini'
 
 
-def string_fixture():
-    return '\n'.join(list_fixture())
+# def string_fixture():
+#     return '\n'.join(list_fixture)
 
 
-def unicode_file_fixture():
-    return 'tests/fixtures/test.ini'
+# def unicode_file_fixture():
+#     return 'tests/fixtures/test.ini'
 
 
 @pytest.fixture()
@@ -35,7 +55,7 @@ def koi8r_file_fixture():
     return 'tests/fixtures/koi8-r.ini'
 
 
-@pytest.fixture(params=[list_fixture(), string_fixture(), unicode_file_fixture()])
+@pytest.fixture(params=[list_fixture, string_fixture, unicode_file_fixture])
 def common_configs(request):
     return liteconfig.Config(request.param)
 
