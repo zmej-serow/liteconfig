@@ -2,26 +2,7 @@ import liteconfig
 import pytest
 
 
-# def list_fixture():
-#     return ['; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
-#             'property = value',
-#             '',
-#             '[section]',
-#             '; this comment will be ignored',
-#             'heads = tails',
-#             'truth = lie',
-#             'nokia = 3310',
-#             '',
-#             '[misc]',
-#             '# this comment will be ignored too',
-#             'kill_all_humans = yes',
-#             'pi = 3.14159',
-#             '',
-#             '[юникод]',
-#             '文字 = 😉'
-#             ]
-
-list_fixture = ['; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
+list_input = ['; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
                 'property = value',
                 '',
                 '[section]',
@@ -37,25 +18,13 @@ list_fixture = ['; you can have properties belonging to no section (i.e., in ver
                 '',
                 '[юникод]',
                 '文字 = 😉'
-                ]
-string_fixture = '\n'.join(list_fixture)
-unicode_file_fixture = 'tests/fixtures/test.ini'
+              ]
+string_input = '\n'.join(list_input)
+unicode_file = 'tests/fixtures/test.ini'
+koi8r_file = 'tests/fixtures/koi8-r.ini'
 
 
-# def string_fixture():
-#     return '\n'.join(list_fixture)
-
-
-# def unicode_file_fixture():
-#     return 'tests/fixtures/test.ini'
-
-
-@pytest.fixture()
-def koi8r_file_fixture():
-    return 'tests/fixtures/koi8-r.ini'
-
-
-@pytest.fixture(params=[list_fixture, string_fixture, unicode_file_fixture])
+@pytest.fixture(params=[list_input, string_input, unicode_file])
 def common_configs(request):
     return liteconfig.Config(request.param)
 
@@ -92,7 +61,7 @@ def parse_booleans(request):
 
 @pytest.fixture(params=['koi8_r', 'cp1251'])
 def encodings(request):
-    return liteconfig.Config(koi8r_file_fixture(), encoding=request.param)
+    return liteconfig.Config(koi8r_file, encoding=request.param)
 
 
 @pytest.fixture(params=[True, False])

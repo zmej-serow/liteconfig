@@ -112,11 +112,6 @@ def test_encodings(encodings):
         assert not encodings.чПРТПУ
 
 
-def test_unicode_against_nonunicode_data(koi8r_file_fixture):
-    with pytest.raises(UnicodeError):
-        _ = liteconfig.Config(koi8r_file_fixture)
-
-
 def test_exceptions(exceptions):
     if exceptions._Config__exceptions:
         with pytest.raises(AttributeError):
