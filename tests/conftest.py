@@ -2,23 +2,24 @@ import liteconfig
 import pytest
 
 
-list_input = ['; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
-                'property = value',
-                '',
-                '[section]',
-                '; this comment will be ignored',
-                'heads = tails',
-                'truth = lie',
-                'nokia = 3310',
-                '',
-                '[misc]',
-                '# this comment will be ignored too',
-                'kill_all_humans = yes',
-                'pi = 3.14159',
-                '',
-                '[юникод]',
-                '文字 = 😉'
-              ]
+list_input = [
+    '; you can have properties belonging to no section (i.e., in very simple sectionless configs)',
+    'property = value',
+    '',
+    '[section]',
+    '; this comment will be ignored',
+    'heads = tails',
+    'truth = lie',
+    'nokia = 3310',
+    '',
+    '[misc]',
+    '# this comment will be ignored too',
+    'kill_all_humans = yes',
+    'pi = 3.14159',
+    '',
+    '[юникод]',
+    '文字 = 😉'
+]
 string_input = '\n'.join(list_input)
 unicode_file = 'tests/fixtures/test.ini'
 koi8r_file = 'tests/fixtures/koi8-r.ini'

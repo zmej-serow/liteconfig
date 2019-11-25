@@ -163,8 +163,10 @@ class Config(object):
         with open(file, 'w', encoding=self.__encoding) as f:
             f.writelines(export_lines)
 
-    def _export(self, section, accumulator=[]):
+    def _export(self, section, accumulator=None):
         """Returns config representation as list of strings"""
+        if accumulator is None:
+            accumulator = []
         for key, value in section.__dict__.items():
             if isinstance(value, (str, int, bool, float)) and key[0] is not '_':
                 accumulator.append(key + self.__delimiter + str(value))
