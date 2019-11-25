@@ -24,6 +24,11 @@ unicode_file = 'tests/fixtures/test.ini'
 koi8r_file = 'tests/fixtures/koi8-r.ini'
 
 
+@pytest.fixture()
+def config_list():
+    return list_input
+
+
 @pytest.fixture(params=[list_input, string_input, unicode_file])
 def common_configs(request):
     return liteconfig.Config(request.param)

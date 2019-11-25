@@ -163,8 +163,10 @@ class Config(object):
         with open(file, 'w', encoding=self.__encoding) as f:
             f.writelines(export_lines)
 
-    def _export(self, section, accumulator=[]):
+    def _export(self, section, accumulator=None):
         """Returns config representation as list of strings"""
+        if accumulator is None:
+            accumulator = []
         for key, value in section.__dict__.items():
             if isinstance(value, (str, int, bool, float)) and key[0] is not '_':
                 accumulator.append(key + self.__delimiter + str(value))
@@ -185,7 +187,7 @@ class Config(object):
 
     def _parse_list(self, config_list):
         config_list = [x.strip() for x in config_list]
-        config_list = [x for x in config_list if (len(x) > 2 and x[0] not in self.__comment_markers)]
+        config_list = [x for x in config_list if len(x) > 2]
         self.__dict__ = {**self.__dict__, **self._parser_factory()(config_list).__dict__}
 
     @staticmethod
@@ -228,36 +230,41 @@ class Config(object):
         :param lines: list of lines of config file.
         :return ConfigSection object.
         """
-        section = dict()
+        section = {}
+        comments = []
         is_section = lambda line: True if line.startswith('[') and line.endswith(']') else False
         is_comment = lambda line: True if line[0] in self.__comment_markers else False
 
         while lines:
             line = lines.pop(0)
 
-            if is_section(line):
-                property_key = line[1:-1]
-                self.__sections.append(property_key)
-                section_content = []
-                while lines and not is_section(lines[0]):  # rip section lines and feed them to separate parser
-                    section_content.append(lines.pop(0))
-                section[property_key] = self._default_parser(section_content, property_key)
-
+            if is_comment(line):
+                comments.append(line)
             else:
-                equator = line.find(self.__delimiter)  # chop key:value line
-                property_key = line[:equator].strip()
-                property_value = line[equator + 1:].strip()
+                comments.append(None)
+                if is_section(line):
+                    property_key = line[1:-1]
+                    self.__sections.append(property_key)
+                    section_content = []
+                    while lines and not is_section(lines[0]):  # rip section lines and feed them to separate parser
+                        section_content.append(lines.pop(0))
+                    section[property_key] = self._default_parser(section_content, property_key)
 
-                saved_pv = property_value
-                if self.__parse_booleans:
-                    property_value = self._parse_booleans(property_value)
-                if saved_pv is property_value:
-                    if self.__parse_numbers:
-                        property_value = self._parse_numbers(property_value)
+                else:
+                    equator = line.find(self.__delimiter)  # chop key:value line
+                    property_key = line[:equator].strip()
+                    property_value = line[equator + 1:].strip()
 
-                section[property_key] = property_value
-                self.__properties.append(property_key)
-        return ConfigSection(self.__exceptions, section_name, section)
+                    saved_pv = property_value
+                    if self.__parse_booleans:
+                        property_value = self._parse_booleans(property_value)
+                    if saved_pv is property_value:
+                        if self.__parse_numbers:
+                            property_value = self._parse_numbers(property_value)
+
+                    section[property_key] = property_value
+                    self.__properties.append(property_key)
+        return ConfigSection(self.__exceptions, comments, section_name, section)
 
     def __getattr__(self, item):
         if not self.__exceptions:
@@ -298,9 +305,10 @@ class ConfigSection(object):
     """
     Data container object
     """
-    def __init__(self, exceptions, section_name, argv):
+    def __init__(self, exceptions, comments, section_name, argv):
         self.__exceptions = exceptions
         self.__name = section_name
+        self.__comments = comments
         for key, value in argv.items():
             self.__dict__[key] = value
 
