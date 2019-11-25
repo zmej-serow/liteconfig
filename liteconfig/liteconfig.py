@@ -230,6 +230,7 @@ class Config(object):
         """
         section = dict()
         is_section = lambda line: True if line.startswith('[') and line.endswith(']') else False
+        is_comment = lambda line: True if line[0] in self.__comment_markers else False
 
         while lines:
             line = lines.pop(0)
