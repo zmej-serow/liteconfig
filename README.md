@@ -83,7 +83,7 @@ Export config to file with the same settings as when object was instantiated.
 
 - Fail to decode `input_data` file will result in `UnicodeError`.
 
-## Notes:
+## Notes
 - When exporting config, boolean values will always be written like `True` or `False`, regardless of initial readings (`yes`, `no`, `on`, `off` et cetera).
 
 ## Example
