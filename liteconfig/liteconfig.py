@@ -167,12 +167,26 @@ class Config(object):
         """Returns config representation as list of strings"""
         if accumulator is None:
             accumulator = []
-        for key, value in section.__dict__.items():
-            if isinstance(value, (str, int, bool, float)) and key[0] is not '_':
+
+        # filtering out auxiliary keys
+        section_items = {k: v for k, v in section.__dict__.items() if not k.startswith('_')}
+
+        # adding comments or regular properties
+        items = iter(section_items)
+        for comment in section._ConfigSection__comments:
+            if comment is None:
+                key = next(items)
+                value = section_items[key]
                 accumulator.append(key + self.__delimiter + str(value))
-            elif isinstance(value, ConfigSection):
-                accumulator.append('[' + key + ']')
-                accumulator.append(self._export(value, accumulator))
+            else:
+                accumulator.append(comment)
+
+        # adding sections, recursively calling export function for new sections
+        for key in items:
+            value = section_items[key]
+            accumulator.append('[' + key + ']')
+            accumulator.append(self._export(value, accumulator))
+
         return accumulator
 
     def _parse_file(self, config_file):
@@ -241,7 +255,6 @@ class Config(object):
             if is_comment(line):
                 comments.append(line)
             else:
-                comments.append(None)
                 if is_section(line):
                     property_key = line[1:-1]
                     self.__sections.append(property_key)
@@ -249,8 +262,8 @@ class Config(object):
                     while lines and not is_section(lines[0]):  # rip section lines and feed them to separate parser
                         section_content.append(lines.pop(0))
                     section[property_key] = self._default_parser(section_content, property_key)
-
                 else:
+                    comments.append(None)
                     equator = line.find(self.__delimiter)  # chop key:value line
                     property_key = line[:equator].strip()
                     property_value = line[equator + 1:].strip()

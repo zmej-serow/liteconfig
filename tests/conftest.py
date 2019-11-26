@@ -7,17 +7,23 @@ list_input = ['; you can have properties belonging to no section (i.e., in very 
                 '',
                 '[section]',
                 '; this comment will be ignored',
+                '; multiline comment!',
+                '; multiline comment2',
                 'heads = tails',
                 'truth = lie',
+                '; azaza',
+                '; multiline',
                 'nokia = 3310',
                 '',
                 '[misc]',
                 '# this comment will be ignored too',
                 'kill_all_humans = yes',
                 'pi = 3.14159',
+                '; hohoho',
                 '',
                 '[юникод]',
-                '文字 = 😉'
+                '文字 = 😉',
+                '#last one'
               ]
 string_input = '\n'.join(list_input)
 unicode_file = 'tests/fixtures/test.ini'
