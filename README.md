@@ -24,43 +24,33 @@ Lightweight and configurable .ini config parser with dot notation property acces
 ## Default parsing options and their meaning
 
 - `delimiter = '='`  
-
 delimiter between property and value is "=".
 
-- `before_delimiter = ' '`
-
-string which will precede delimiter character when exporting config to file.
- 
-- `after_delimiter = ' '`
-
-string which will follow up delimiter character when exporting config to file.
+- `before_delimiter = ' '`  
+- `after_delimiter = ' '`  
+strings which will precede and follow up delimiter character when exporting config to file.
+For example, property `i` with value of `0` will be exported as `i = 0`. And if `before_delimiter` will be set as ` :`,
+the same thing will be exported as `i := 0`.  
 
 - `comment_markers = '#;'`  
-
 empty lines and lines beginning with "#" or ";" are ignored.
 
 - `parse_numbers = True`  
-
 will try to parse numeric values to int or float.
 
 - `parse_booleans = True`  
-
 will try to parse boolean values to bool.
 
 - `boolean_true = ('yes', 'true', 'on')`  
-
 case-insensitive tuple of string values, recognized as boolean "True".
 
 - `boolean_false = ('no', 'false', 'off')`  
-
 case-insensitive tuple of string values, recognized as boolean "False".
 
 - `encoding = 'utf-8'`  
-
 parser will try to read and write config files using this encoding.
 
-- `exceptions = False`
-
+- `exceptions = False`  
 If True, accessing nonexistent properties (or sections) of config will raise `AttributeError`.
 If False, nonexistent property will return None. Absent section will return special object Nothing, which can be tested against truth (and it will always return False). So you can use the construction like
 ```python
