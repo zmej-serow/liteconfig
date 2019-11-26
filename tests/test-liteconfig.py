@@ -54,25 +54,25 @@ def test_invalid_input():
         _ = liteconfig.Config({'we': 'they'})
 
 
-# def test_write(simple_config):
-#     simple_config.write('tests/fixtures/out.ini')
-#     test_read = liteconfig.Config('tests/fixtures/out.ini')
-#     os.remove('tests/fixtures/out.ini')
-#     assert simple_config._Config__properties == test_read._Config__properties
-#     assert len(test_read._Config__properties) == 3
-#     assert simple_config._Config__sections == test_read._Config__sections
-#     assert len(test_read._Config__sections) == 2
-#     assert simple_config.property == test_read.property
-#     assert simple_config.section.first == test_read.section.first, 1
-#     assert simple_config.partition.second == test_read.partition.second, 2
+def test_write(simple_config):
+    simple_config.write('tests/fixtures/out.ini')
+    test_read = liteconfig.Config('tests/fixtures/out.ini')
+    os.remove('tests/fixtures/out.ini')
+    assert simple_config._Config__properties == test_read._Config__properties
+    assert len(test_read._Config__properties) == 3
+    assert simple_config._Config__sections == test_read._Config__sections
+    assert len(test_read._Config__sections) == 2
+    assert simple_config.property == test_read.property
+    assert simple_config.section.first == test_read.section.first, 1
+    assert simple_config.partition.second == test_read.partition.second, 2
 
 
-def test_write_with_comments(config_list):
-    liteconfig.Config(config_list).write('tests/fixtures/out.ini')
+def test_write_with_comments(comments_list):
+    liteconfig.Config(comments_list).write('tests/fixtures/out.ini')
     with open('tests/fixtures/out.ini', 'r', encoding='utf-8') as f:
         config_with_comments = f.read().split('\n')
-    # os.remove('tests/fixtures/out.ini')
-    assert config_with_comments == config_list
+    os.remove('tests/fixtures/out.ini')
+    assert config_with_comments == comments_list
 
 
 def test_delimiter(delimiter_configs):

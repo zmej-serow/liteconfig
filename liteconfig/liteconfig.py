@@ -16,6 +16,10 @@ Features:
 Default parsing options and their meaning:
     - delimiter = '='
       Delimiter between property and value is "=".
+    - before_delimiter = ' '
+      String which will precede delimiter character when exporting config to file.
+    - after_delimiter = ' '
+      String which will follow up delimiter character when exporting config to file.
     - comment_markers = '#;'
       Empty lines and lines beginning with "#" or ";" are ignored.
     - parse_numbers = True
@@ -57,6 +61,10 @@ Error handling:
     - If desired, access to nonexistent property (or section) will raise AttributeError.
     - If input_data is not list nor string nor path to config file, will raise ValueError.
     - Fail to decode input_data file will result in UnicodeError.
+
+Notes:
+    - When exporting config, boolean values will always be written like `True` or `False`,
+      regardless of initial readings (`yes`, `no`, `on`, `off` et cetera).
 
 Example:
 
@@ -103,6 +111,8 @@ class Config(object):
     def __init__(self,
                  input_data,
                  delimiter='=',
+                 before_delimiter=' ',
+                 after_delimiter=' ',
                  comment_markers='#;',
                  hierarchy=None,
                  parse_numbers=True,
@@ -117,6 +127,8 @@ class Config(object):
 
         :param comment_markers: config line is ignored if it begins with one of these characters.
         :param delimiter: character delimiting property and value.
+        :param before_delimiter: string which will precede delimiter character when exporting config to file.
+        :param after_delimiter: string which will follow up delimiter character when exporting config to file.
         :param hierarchy: (stub) .ini-file section hierarchy type.
         :param parse_numbers: if set, number-looking values will be parsed as float or integer, not strings.
         :param parse_booleans: if set, boolean-looking values will be parsed as real booleans, not strings.
@@ -126,6 +138,7 @@ class Config(object):
         """
         self.__comment_markers = comment_markers
         self.__delimiter = delimiter
+        self.__delimiter_pattern = before_delimiter + delimiter + after_delimiter
         self.__hierarchy = hierarchy
         self.__parse_numbers = parse_numbers
         self.__parse_booleans = parse_booleans
@@ -177,7 +190,7 @@ class Config(object):
             if comment is None:
                 key = next(items)
                 value = section_items[key]
-                accumulator.append(key + self.__delimiter + str(value))
+                accumulator.append(key + self.__delimiter_pattern + str(value))
             else:
                 accumulator.append(comment)
 
@@ -196,18 +209,18 @@ class Config(object):
             self._parse_list(config_lines)
 
     def _parse_string(self, config_string):
+        """Used to initialize Config object data structures from string"""
         config_lines = config_string.split('\n')
         self._parse_list(config_lines)
 
     def _parse_list(self, config_list):
+        """Used to initialize Config object data structures from list"""
         config_list = [x.strip() for x in config_list]
-        config_list = [x for x in config_list if len(x) > 2]
-        self.__dict__ = {**self.__dict__, **self._parser_factory()(config_list).__dict__}
+        self.__dict__ = {**self.__dict__, **self._parser(config_list).__dict__}
 
     @staticmethod
     def _parse_numbers(value):
-        """If string value can be represented as number,
-        method will return it as int or float, else untouched."""
+        """If string value can be represented as number, method will return it as int or float, else untouched."""
         try:
             conv_float = float(value)
             if conv_float - int(conv_float) == 0:
@@ -219,8 +232,7 @@ class Config(object):
         return value
 
     def _parse_booleans(self, value):
-        """If string value can be interpreted as boolean,
-        method will return it as True or as False, else untouched."""
+        """If string value can be interpreted as boolean, method will return it as True or as False, else untouched."""
         lowercase_value = value.lower()
         if lowercase_value in self.__boolean_true:
             return True
@@ -228,13 +240,10 @@ class Config(object):
             return False
         return value
 
-    def _parser_factory(self):
-        """
-        Factory for choosing correct parsing method for selected hierarchy style.
-        :return parser method
-        """
+    def _parser(self, config):
+        """Factory for choosing correct parsing method for selected hierarchy style."""
         if not self.__hierarchy:
-            return self._default_parser
+            return self._default_parser(config)
         else:
             raise NotImplementedError("Parsing hierarchical INI configs is not yet implemented")
 
@@ -242,12 +251,13 @@ class Config(object):
         """
         Default parser: sections' structure is flat (no hierarchy).
         :param lines: list of lines of config file.
+        :param section_name: None if parsing no-section part of config or section name otherwise.
         :return ConfigSection object.
         """
         section = {}
         comments = []
         is_section = lambda line: True if line.startswith('[') and line.endswith(']') else False
-        is_comment = lambda line: True if line[0] in self.__comment_markers else False
+        is_comment = lambda line: True if len(line) < 2 or line[0] in self.__comment_markers else False
 
         while lines:
             line = lines.pop(0)
@@ -261,7 +271,7 @@ class Config(object):
                     section_content = []
                     while lines and not is_section(lines[0]):  # rip section lines and feed them to separate parser
                         section_content.append(lines.pop(0))
-                    section[property_key] = self._default_parser(section_content, property_key)
+                    section[property_key] = self._default_parser(section_content, section_name=property_key)
                 else:
                     comments.append(None)
                     equator = line.find(self.__delimiter)  # chop key:value line
@@ -315,9 +325,7 @@ class Nothing(object, metaclass=Singleton):
 
 
 class ConfigSection(object):
-    """
-    Data container object
-    """
+    """Data container object"""
     def __init__(self, exceptions, comments, section_name, argv):
         self.__exceptions = exceptions
         self.__name = section_name

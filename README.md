@@ -25,6 +25,12 @@ Lightweight and configurable .ini config parser with dot notation property acces
 - `delimiter = '='`  
 delimiter between property and value is "=".
 
+- `before_delimiter = ' '`
+string which will precede delimiter character when exporting config to file.
+ 
+- `after_delimiter = ' '`
+string which will follow up delimiter character when exporting config to file.
+
 - `comment_markers = '#;'`  
 empty lines and lines beginning with "#" or ";" are ignored.
 
@@ -77,6 +83,9 @@ Export config to file with the same settings as when object was instantiated.
 
 - Fail to decode `input_data` file will result in `UnicodeError`.
 
+## Notes:
+- When exporting config, boolean values will always be written like `True` or `False`, regardless of initial readings (`yes`, `no`, `on`, `off` et cetera).
+
 ## Example
 
 ```ini
@@ -126,9 +135,9 @@ print(cfg.voidsection)                 # AttributeError exception or Nothing (bo
 ```
 
 ## TO-DO
-- Keep comments when writing previously read config.
-
 - Parsers for various formats of hierarchical configs (with subsections).
+
+- Support for versions of Python lesser than 3.6 (probably).
 
 ## History
 - 0.0.1: initial release.
@@ -142,3 +151,5 @@ print(cfg.voidsection)                 # AttributeError exception or Nothing (bo
 - 0.1.1: minor fixes in documentation.
 
 - 0.1.2: code clean-up.
+
+- 1.0.0: bug-fixing. Tests re-written using pytest. Also, liteconfig learned how to keep comments when writing previously read config.
