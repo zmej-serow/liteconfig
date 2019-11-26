@@ -180,7 +180,7 @@ class Config(object):
         """Returns config representation as list of strings"""
         if accumulator is None:
             accumulator = []
-
+            
         # filtering out auxiliary keys
         section_items = {k: v for k, v in section.__dict__.items() if not k.startswith('_')}
 
@@ -199,7 +199,7 @@ class Config(object):
             value = section_items[key]
             accumulator.append('[' + key + ']')
             accumulator.append(self._export(value, accumulator))
-
+            
         return accumulator
 
     def _parse_file(self, config_file):

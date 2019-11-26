@@ -18,7 +18,7 @@ list_input = [
     'pi = 3.14159',
     '',
     '[юникод]',
-    '文字 = 😉',
+    '文字 = 😉'
 ]
 string_input = '\n'.join(list_input)
 unicode_file = 'tests/fixtures/test.ini'
