@@ -136,6 +136,8 @@ print(cfg.voidsection)                 # AttributeError exception or Nothing (bo
 ```
 
 ## TO-DO
+- Add support for multiline values and empty values (like in Python default ConfigParser module).
+
 - Parsers for various formats of hierarchical configs (with subsections).
 
 - Support for versions of Python lesser than 3.6 (probably).
